@@ -7,7 +7,7 @@ import (
 func InitRouter() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/shorten", CreateShortURL).Methods("POST")
-	router.HanldeFunc("/{shortURL}", RedirectToOriginalURL).Methods("GET")
+	router.HandleFunc("/{shortURL}", RedirectToOriginalURL).Methods("GET")
 	return router
 }
 

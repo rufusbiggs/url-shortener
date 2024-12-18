@@ -5,8 +5,8 @@ import (
 )
 
 type URL struct {
-	ID          int        `json:"id"`
-	ShortURL    string     `json:"short_url"`
-	LongURL     string     `json:"long_url"`
-	CreatedAt   time.Time  `json:"created_at"`
+	ID            int        `json:"id"`
+	ShortURL      string     `json:"short_url"`
+	OriginalURL   string     `json:"original_url"`
+	CreatedAt     time.Time  `json:"created_at"`
 }
