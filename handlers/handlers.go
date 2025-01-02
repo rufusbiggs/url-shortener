@@ -1,8 +1,9 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
 	"math/rand"
+	"fmt"
 	"time"
 	"net/http"
 	"url-shortener/models"
@@ -39,12 +40,14 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 func RedirectToOriginalURL(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	shortURL := vars["shortUrl"]
+	shortURL := vars["shortURL"]
+	fmt.Println("Recieved short URL: ", shortURL)
 
 	var originalURL string
 	err := database.DB.QueryRow("SELECT original_url FROM urls WHERE short_url = $1", shortURL).Scan(&originalURL)
 	if err != nil {
-		http.NotFound(w, r)
+		fmt.Println("Error fetching from DB:", err)
+		http.Error(w, "Short URL not found", http.StatusNotFound)
 		return
 	}
 
