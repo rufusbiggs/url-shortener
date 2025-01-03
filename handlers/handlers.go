@@ -44,12 +44,41 @@ func RedirectToOriginalURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Recieved short URL: ", shortURL)
 
 	var originalURL string
-	err := database.DB.QueryRow("SELECT original_url FROM urls WHERE short_url = $1", shortURL).Scan(&originalURL)
+	var accessCount int
+	// Query original URL
+	err := database.DB.QueryRow("SELECT original_url, access_count FROM urls WHERE short_url = $1", shortURL).Scan(&originalURL, &accessCount)
 	if err != nil {
 		fmt.Println("Error fetching from DB:", err)
 		http.Error(w, "Short URL not found", http.StatusNotFound)
 		return
 	}
+	// Increment access count for analytics
+	_, err = database.DB.Exec("UPDATE urls SET access_count = $1 WHERE short_url = $2", accessCount+1, shortURL)
+	if err != nil {
+		fmt.Println("Error updating access count:", err)
+	}
 
 	http.Redirect(w, r, originalURL, http.StatusFound)
+}
+
+func GetURLAnalytics(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	shortURL := vars["shortURL"]
+
+	var originalURL string
+	var accessCount int
+	err := database.DB.QueryRow("SELECT original_url, access_count FROM urls WHERE short_url = $1", shortURL).Scan(&originalURL, &accessCount)
+	if err != nil {
+		http.Error(w, "Short URL not found", http.StatusNotFound)
+		return
+	}
+
+	response := map[string]interface{}{
+		"short_url":      shortURL,
+		"original_url":   originalURL,
+		"access_count":   accessCount,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
