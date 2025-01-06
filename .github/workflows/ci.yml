@@ -48,3 +48,5 @@ jobs:
     - name: Run tests inside the container
       run: |
         docker run $DOCKER_USERNAME/url-shortener:$GITHUB_SHA go test ./...
+
+# adding comment to test auto deploy
