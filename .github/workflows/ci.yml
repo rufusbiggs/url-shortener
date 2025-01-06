@@ -12,12 +12,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Define environment variables for all steps within this job
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      HEROKU_APP_NAME: your-heroku-app-name # Replace with your Heroku app name
 
     steps:
     - name: Checkout code
@@ -36,6 +35,10 @@ jobs:
     - name: Push Docker image to DockerHub
       run: docker push $DOCKER_USERNAME/url-shortener:$GITHUB_SHA
 
+    - name: Install Heroku CLI
+      run: |
+        curl https://cli-assets.heroku.com/install.sh | sh
+
     - name: Deploy to Heroku
       run: |
         echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
@@ -48,5 +51,3 @@ jobs:
     - name: Run tests inside the container
       run: |
         docker run $DOCKER_USERNAME/url-shortener:$GITHUB_SHA go test ./...
-
-# adding comment to test auto deploy
