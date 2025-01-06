@@ -16,7 +16,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      HEROKU_APP_NAME: your-heroku-app-name # Replace with your Heroku app name
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
 
     steps:
     - name: Checkout code
