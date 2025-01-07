@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"net/http"
 	"url-shortener/database"
 	"url-shortener/router"
@@ -15,6 +16,10 @@ func main() {
 	fmt.Println("Database initialised successfully")
 
 	r := router.InitRouter()
-	log.Println("Server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Fallback to local 8080 if issues
+	}
+	log.Printf("Server running on :%s", port)
+	log.Fatal(http.ListenAndServe(":" + port, r))
 } 
