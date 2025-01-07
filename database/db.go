@@ -10,14 +10,23 @@ import (
 var DB *sql.DB
 
 func InitDB() error {
-	// Get environment variables for DB connection
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		// Fallback to individual environment variables
+		dbHost := os.Getenv("DB_HOST")
+		dbPort := os.Getenv("DB_PORT")
+		dbUser := os.Getenv("DB_USER")
+		dbPassword := os.Getenv("DB_PASSWORD")
+		dbName := os.Getenv("DB_NAME")
 
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbHost, dbPort)
+		connStr = fmt.Sprintf(
+			"user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", 
+			dbUser, dbPassword, dbName, dbHost, dbPort,
+		)
+	}
+		
+
+	
 	var err error
 	DB, err = sql.Open("postgres", connStr)
 	if err != nil {
